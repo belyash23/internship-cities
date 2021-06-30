@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\models\SignupForm;
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -81,9 +83,12 @@ class SiteController extends Controller
         }
 
         $model->password = '';
-        return $this->render('login', [
-            'model' => $model,
-        ]);
+        return $this->render(
+            'login',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**
@@ -111,9 +116,12 @@ class SiteController extends Controller
 
             return $this->refresh();
         }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
+        return $this->render(
+            'contact',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**
@@ -124,5 +132,30 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    public function actionSignup()
+    {
+        if (!YII::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new SignupForm();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $user = new User();
+            $user->fio = $model->fio;
+            $user->email = $model->email;
+            $user->phone = $model->phone;
+            $user->password = Yii::$app->getSecurity()->generatePasswordHash($model->password);
+            $user->save();
+            return $this->goHome();
+        }
+
+        return $this->render(
+            'signup',
+            [
+                'model' => $model
+            ]
+        );
     }
 }

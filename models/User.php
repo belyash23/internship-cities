@@ -31,8 +31,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['fio', 'email', 'phone', 'date_create', 'password'], 'required'],
-            [['date_create'], 'safe'],
+            [['fio', 'email', 'phone', 'password'], 'required'],
             [['fio', 'email', 'phone', 'password'], 'string', 'max' => 255],
             [['password'], 'unique'],
             [['phone'], 'unique'],
@@ -75,5 +74,20 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
     public function validateAuthKey($authKey)
     {
+    }
+
+    public static function findByEmail($email)
+    {
+        return self::findOne(['email' => $email]);
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->date_create = time();
+            return true;
+        } else {
+            return false;
+        }
     }
 }
