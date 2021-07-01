@@ -101,4 +101,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             return false;
         }
     }
+
+    public function validatePassword($password)
+    {
+        return Yii::$app->getSecurity()->validatePassword($password, $this->password);
+    }
 }
