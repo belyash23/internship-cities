@@ -18,7 +18,9 @@ class m210629_102919_create_user_table extends Migration
             'email' => $this->string()->notNull()->unique(),
             'phone' => $this->string()->notNull()->unique(),
             'date_create' => $this->date()->notNull(),
-            'password' => $this->string()->notNull()->unique()
+            'password' => $this->string()->notNull()->unique(),
+            'confirmation_token' => $this->string(),
+            'status' => $this->smallInteger()->notNull()
         ]);
     }
 

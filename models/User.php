@@ -14,9 +14,14 @@ use yii\web\IdentityInterface;
  * @property string $phone
  * @property string $date_create
  * @property string $password
+ * @property string $confirmation_token
+ * @property string $status
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
+    const STATUS_WAIT = 0;
+    const STATUS_CONFIRMED = 1;
+
     /**
      * {@inheritdoc}
      */
@@ -32,8 +37,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         return [
             [['fio', 'email', 'phone', 'password'], 'required'],
-            [['fio', 'email', 'phone', 'password'], 'string', 'max' => 255],
+            ['confirmation_token', 'safe'],
+            [['fio', 'email', 'phone', 'password', 'confirmation_token'], 'string', 'max' => 255],
             [['password'], 'unique'],
+            ['status', 'in', 'range' => [self::STATUS_WAIT, self::STATUS_CONFIRMED]],
             [['phone'], 'unique'],
             [['email'], 'unique'],
         ];
@@ -84,7 +91,11 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function beforeSave($insert)
     {
         if (parent::beforeSave($insert)) {
-            $this->date_create = time();
+            if ($this->status === null) {
+                $this->status = self::STATUS_WAIT;
+                $this->date_create = time();
+            }
+
             return true;
         } else {
             return false;

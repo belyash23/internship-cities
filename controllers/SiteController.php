@@ -147,7 +147,10 @@ class SiteController extends Controller
             $user->email = $model->email;
             $user->phone = $model->phone;
             $user->password = Yii::$app->getSecurity()->generatePasswordHash($model->password);
+            $user->confirmation_token = Yii::$app->getSecurity()->generateRandomString();
             $user->save();
+            Yii::$app->session->setFlash('success', 'Проверьте свою почту для подтверждения регистрации');
+            self::sentEmailConfirmation($user);
             return $this->goHome();
         }
 
@@ -158,4 +161,44 @@ class SiteController extends Controller
             ]
         );
     }
+
+    private static function sentEmailConfirmation($user)
+    {
+        $email = $user->email;
+
+        Yii::$app->mailer
+            ->compose(
+                ['html' => 'confirm-email'],
+                ['user' => $user]
+            )
+            ->setTo($email)
+            ->setFrom(Yii::$app->params['adminEmail'])
+            ->setSubject('Confirmation of registration')
+            ->send();
+    }
+
+    private static function confirmEmail($token, $email)
+    {
+        $user = User::findOne(['confirmation_token' => $token, 'email' => $email]);
+        if (!$user) {
+            throw new \DomainException('User is not found.');
+        }
+
+        $user->confirmation_token = null;
+        $user->status = User::STATUS_CONFIRMED;
+        $user->save();
+    }
+
+    public function actionConfirmEmail($token, $email)
+    {
+        try {
+            self::confirmEmail($token, $email);
+            Yii::$app->session->setFlash('success', 'Вы успешно подтвердили свою почту.');
+        } catch (\Exception $e) {
+            Yii::$app->session->setFlash('error', $e->getMessage());
+        }
+
+        return $this->goHome();
+    }
+
 }
