@@ -2,52 +2,84 @@
 
 /* @var $this yii\web\View */
 
+use app\models\City;
+use yii\bootstrap\Modal;
+use yii\helpers\Html;
+use yii\jui\AutoComplete;
+use yii\widgets\ActiveForm;
+
 $this->title = 'My Yii Application';
 ?>
 <div class="site-index">
 
     <div class="jumbotron">
-        <h1>Congratulations!</h1>
-
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
+        <h1>Выберите город</h1>
     </div>
 
     <div class="body-content">
 
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
+        <?php
+        $form = ActiveForm::begin(
+            [
+                'action' => 'site/choose-city',
+                'options' => [
+                    'class' => 'col-md-4 col-md-offset-4'
+                ]
+            ]
+        ); ?>
+        <div class="form-group">
+            <?php
+            $cities = array_values(City::find()->select('name')->asArray()->orderBy('name')->all());
+            $source = [];
+            foreach ($cities as $city) {
+                $source [] = $city['name'];
+            }
+            echo AutoComplete::widget(
+                [
+                    'model' => $model,
+                    'attribute' => 'city',
+                    'options' => [
+                        'id' => 'choosecity-city',
+                        'class' => 'form-control',
+                        'required' => 'true'
+                    ],
+                    'clientOptions' => [
+                        'source' => $source
+                    ],
+                ]
+            );
+            ?>
         </div>
+        <div class="form-group">
+            <?= Html::submitButton('Выбрать', ['class' => 'btn btn-success col-md-4 col-md-offset-4']) ?>
+        </div>
+        <?php
+        ActiveForm::end(); ?>
 
     </div>
+    <?php
+    if (isset($model->city)) {
+        Modal::begin(
+            [
+                'header' => '<h2 class="text-center">' . $model->city . ' ваш город?</h2>',
+                'toggleButton' => [
+                    'label' => 'click me',
+                    'id' => 'open-modal',
+                    'hidden' => 'true'
+                ],
+                'options' => [
+                    'id' => 'choose-city-modal'
+                ],
+                'closeButton' => ['id' => 'close-modal', 'hidden' => 'true']
+            ]
+        );
+        echo Html::a('Да', ['site/choose-city', 'city' => $model->city], ['class' => 'btn btn-primary']);
+        echo Html::button('Нет', ['id' => 'modal-no', 'class' => 'btn btn-primary pull-right']);
+        Modal::end();
+        $this->registerJs("
+            $('#open-modal').click();
+            $('#modal-no').click(() => $('#close-modal').click());
+        ");
+    }
+    ?>
 </div>

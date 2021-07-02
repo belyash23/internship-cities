@@ -9,7 +9,7 @@ $config = [
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
-        '@npm'   => '@vendor/npm-asset',
+        '@npm' => '@vendor/npm-asset',
     ],
     'components' => [
         'request' => [
@@ -49,6 +49,9 @@ $config = [
             'rules' => [
             ],
         ],
+        'session' => [
+            'timeout' => 60 * 60 * 2
+        ]
     ],
     'params' => $params,
 ];

@@ -6,8 +6,6 @@
 use app\components\UserMenu;
 use app\widgets\Alert;
 use yii\helpers\Html;
-use yii\bootstrap\Nav;
-use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
 
@@ -28,36 +26,6 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 
 <div class="wrap">
-<!--    --><?php
-//    NavBar::begin([
-//        'brandLabel' => Yii::$app->name,
-//        'brandUrl' => Yii::$app->homeUrl,
-//        'options' => [
-//            'class' => 'navbar-inverse navbar-fixed-top',
-//        ],
-//    ]);
-//    echo Nav::widget([
-//        'options' => ['class' => 'navbar-nav navbar-right'],
-//        'items' => [
-//            ['label' => 'Home', 'url' => ['/site/index']],
-//            ['label' => 'Отзывы', 'url' => ['/review/index']],
-//            ['label' => 'Создать отзыв', 'url' => ['/review/create']],
-//            Yii::$app->user->isGuest ? (
-//                ['label' => 'Login', 'url' => ['/site/login']]
-//            ) : (
-//                '<li>'
-//                . Html::beginForm(['/site/logout'], 'post')
-//                . Html::submitButton(
-//                    'Logout (' . Yii::$app->user->identity->email . ')',
-//                    ['class' => 'btn btn-link logout']
-//                )
-//                . Html::endForm()
-//                . '</li>'
-//            )
-//        ],
-//    ]);
-//    NavBar::end();
-//    ?>
     <div class="sidebar">
         <?= UserMenu::widget(); ?>
     </div>

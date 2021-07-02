@@ -2,10 +2,12 @@
 
 namespace app\controllers;
 
+use app\models\ChooseCity;
 use app\models\SignupForm;
 use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
+use yii\helpers\Url;
 use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
@@ -63,7 +65,25 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        if (Yii::$app->session->has('city')) {
+            return Yii::$app->runAction('review/index');
+        }
+        $ip = Yii::$app->request->userIp;
+        $queryParams = http_build_query(
+            [
+                'lang' => 'ru',
+                'objects' => 'city'
+            ]
+        );
+        $response = json_decode(file_get_contents('https://ipwhois.app/json/' . $ip . '?' . $queryParams));
+        $chooseCity = new ChooseCity();
+        $chooseCity->city = $response->city;
+        return $this->render(
+            'index',
+            [
+                'model' => $chooseCity
+            ]
+        );
     }
 
     /**
@@ -201,4 +221,14 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
+    public function actionChooseCity($city = null)
+    {
+        $model = new ChooseCity();
+        if (Yii::$app->request->isPost) {
+            $model->load(Yii::$app->request->post());
+            $city = $model->city;
+        }
+        Yii::$app->session->set('city', $city);
+        return Yii::$app->runAction('review/index');
+    }
 }
