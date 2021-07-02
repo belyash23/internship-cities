@@ -2,12 +2,14 @@
 
 namespace app\controllers;
 
+use app\models\City;
 use Yii;
 use app\models\Review;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * ReviewController implements the CRUD actions for Review model.
@@ -66,8 +68,20 @@ class ReviewController extends Controller
     {
         $model = new Review();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $cityName = Yii::$app->request->post('Review')['cityName'];
+            $img = Yii::$app->request->post('Review')['imgFile'];
+            $city = City::findOne(['name' => $cityName]);
+            if ($city === null) {
+                $city = new City();
+                $city->name = $cityName;
+                $city->save();
+
+            }
+            $model->id_city = $city->id;
+            $model->imgFile = UploadedFile::getInstance($model, 'imgFile');
+            $model->uploadImg();
+            $model->save();
         }
 
         return $this->render('create', [
@@ -123,5 +137,9 @@ class ReviewController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function uploadImg($img) {
+
     }
 }

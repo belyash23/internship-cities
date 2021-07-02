@@ -27,7 +27,7 @@ class City extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'date_create'], 'required'],
+            ['name', 'required'],
             [['date_create'], 'safe'],
             [['name'], 'string', 'max' => 255],
             [['name'], 'unique'],
@@ -44,5 +44,15 @@ class City extends \yii\db\ActiveRecord
             'name' => 'Name',
             'date_create' => 'Date Create',
         ];
+    }
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            $this->date_create = time();
+            return true;
+        } else {
+            return false;
+        }
     }
 }
