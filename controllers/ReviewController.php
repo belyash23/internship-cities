@@ -3,10 +3,13 @@
 namespace app\controllers;
 
 use app\models\City;
+use app\models\User;
 use Yii;
 use app\models\Review;
 use yii\data\ActiveDataProvider;
+use yii\helpers\Json;
 use yii\web\Controller;
+use yii\web\JsExpression;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
@@ -35,15 +38,38 @@ class ReviewController extends Controller
      * Lists all Review models.
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex($id = null)
     {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Review::find(),
-        ]);
+        if ($id) {
+            $authorsReviews = true;
+            $dataProvider = new ActiveDataProvider(
+                [
+                    'query' => Review::find()->where(['id_author' => $id]),
+                ]
+            );
+        } else {
+            $authorsReviews = false;
+            if (!Yii::$app->session->has('city')) {
+                return Yii::$app->runAction('site/index');
+            }
+            $city = Yii::$app->session->get('city');
+            $cityId = City::findOne(['name' => $city]);
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
+            $dataProvider = new ActiveDataProvider(
+                [
+                    'query' => Review::find()->where(['id_city' => $cityId])->orWhere(['id_city' => null]),
+                ]
+            );
+        }
+
+
+        return $this->render(
+            'index',
+            [
+                'dataProvider' => $dataProvider,
+                'authorsReviews' => $authorsReviews
+            ]
+        );
     }
 
     /**
@@ -54,9 +80,12 @@ class ReviewController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+        return $this->render(
+            'view',
+            [
+                'model' => $this->findModel($id),
+            ]
+        );
     }
 
     /**
@@ -76,7 +105,6 @@ class ReviewController extends Controller
                 $city = new City();
                 $city->name = $cityName;
                 $city->save();
-
             }
             $model->id_city = $city->id;
             $model->imgFile = UploadedFile::getInstance($model, 'imgFile');
@@ -84,9 +112,12 @@ class ReviewController extends Controller
             $model->save();
         }
 
-        return $this->render('create', [
-            'model' => $model,
-        ]);
+        return $this->render(
+            'create',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**
@@ -104,9 +135,12 @@ class ReviewController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        return $this->render('update', [
-            'model' => $model,
-        ]);
+        return $this->render(
+            'update',
+            [
+                'model' => $model,
+            ]
+        );
     }
 
     /**
@@ -139,7 +173,17 @@ class ReviewController extends Controller
         throw new NotFoundHttpException('The requested page does not exist.');
     }
 
-    public function uploadImg($img) {
-
+    public function actionGetAuthorData($id)
+    {
+        $data = User::find()
+            ->select('fio, email, phone')
+            ->where(['id' => $id])
+            ->one();
+        $response = [
+            'email' => $data->email,
+            'phone' => $data->phone,
+            'fio' => $data->fio
+        ];
+        return Json::encode($response);
     }
 }

@@ -66,7 +66,7 @@ class SiteController extends Controller
     public function actionIndex()
     {
         if (Yii::$app->session->has('city')) {
-            return Yii::$app->runAction('review/index');
+            return $this->redirect(['review/index']);
         }
         $ip = Yii::$app->request->userIp;
         $queryParams = http_build_query(
@@ -229,6 +229,6 @@ class SiteController extends Controller
             $city = $model->city;
         }
         Yii::$app->session->set('city', $city);
-        return Yii::$app->runAction('review/index');
+        return $this->redirect(['review/index']);
     }
 }

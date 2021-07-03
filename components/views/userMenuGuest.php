@@ -9,4 +9,6 @@ use yii\helpers\Html;
         echo Html::a('Регистрация', array('site/signup')); ?></li>
     <li><?php
         echo Html::a('Вход', array('site/login')); ?></li>
+    <li><?php
+        echo Html::a('Отзывы', array('review/index')); ?></li>
 </ul>

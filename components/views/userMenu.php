@@ -6,6 +6,8 @@ use yii\helpers\Html;
 <h5><?= $title ?></h5>
 <ul>
     <li><?php
+        echo Html::a('Отзывы', array('review/index')); ?></li>
+    <li><?php
         echo Html::a('Создать новый отзыв', array('review/create')); ?></li>
     <li><?php
         echo Html::a('Управление отзывами', array('review/admin')); ?></li>
