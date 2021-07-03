@@ -1,5 +1,6 @@
 <?php
 
+use app\components\Preloader;
 use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\widgets\Pjax;
@@ -7,7 +8,8 @@ use yii\widgets\Pjax;
 $this->title = 'Управление отзывами';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-    <h1>Manage Posts</h1>
+    <h1>Manage Posts <?= Preloader::widget() ?></h1>
+
 
 <?php
 Pjax::begin();

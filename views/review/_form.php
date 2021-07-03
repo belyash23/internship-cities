@@ -1,5 +1,6 @@
 <?php
 
+use app\components\Preloader;
 use yii\helpers\Html;
 use yii\jui\AutoComplete;
 use yii\web\JsExpression;
@@ -76,10 +77,12 @@ use yii\widgets\Pjax;
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
+        <?= Preloader::widget() ?>
     </div>
 
     <?php
     ActiveForm::end();
-    Pjax::end(); ?>
+    Pjax::end();
+    ?>
 
 </div>

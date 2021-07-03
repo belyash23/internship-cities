@@ -50,6 +50,7 @@ $config = [
             ],
         ],
         'session' => [
+            'class' => 'yii\web\Session',
             'timeout' => 60 * 60 * 2
         ]
     ],

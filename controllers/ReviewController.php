@@ -100,13 +100,22 @@ class ReviewController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             Yii::$app->session->setFlash('success', 'Отзыв успешно создан');
             $this->save($model);
+            return $this->renderAjax(
+                'create',
+                [
+                    'model' => $model,
+                ]
+            );
         }
-        return $this->render(
-            'create',
-            [
-                'model' => $model,
-            ]
-        );
+        else {
+            return $this->render(
+                'create',
+                [
+                    'model' => $model,
+                ]
+            );
+        }
+
     }
 
     /**
