@@ -16,8 +16,6 @@ use yii\widgets\ActiveForm;
     <?php
     $form = ActiveForm::begin(); ?>
 
-    <!--    --><?
-    //= $form->field($model, 'city')->textInput() ?>
     <div class="form-group">
         <label for="review-cityname">Город</label>
         <?php

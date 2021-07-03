@@ -129,3 +129,7 @@ a.desc:after {
 .sidebar h5 {
     border-bottom: 1px solid #101010;
 }
+
+.review-img {
+    max-height: 200px;
+}

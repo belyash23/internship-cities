@@ -98,20 +98,9 @@ class ReviewController extends Controller
         $model = new Review();
 
         if ($model->load(Yii::$app->request->post())) {
-            $cityName = Yii::$app->request->post('Review')['cityName'];
-            $img = Yii::$app->request->post('Review')['imgFile'];
-            $city = City::findOne(['name' => $cityName]);
-            if ($city === null) {
-                $city = new City();
-                $city->name = $cityName;
-                $city->save();
-            }
-            $model->id_city = $city->id;
-            $model->imgFile = UploadedFile::getInstance($model, 'imgFile');
-            $model->uploadImg();
-            $model->save();
+            $this->save($model);
         }
-
+        Yii::$app->session->setFlash('success', 'Отзыв успешно создан');
         return $this->render(
             'create',
             [
@@ -131,16 +120,38 @@ class ReviewController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+            $this->save($model);
+            Yii::$app->session->setFlash('success', 'Отзыв успешно отредактирован');
         }
-
         return $this->render(
             'update',
             [
                 'model' => $model,
             ]
         );
+    }
+
+    public function save($model)
+    {
+        $cityName = Yii::$app->request->post('Review')['cityName'];
+        $city = City::findOne(['name' => $cityName]);
+        if ($city === null) {
+            $city = new City();
+            $city->name = $cityName;
+            $city->save();
+        }
+        $model->id_city = $city->id;
+        if ($model->img) {
+            unlink('.' . $model->img);
+        }
+        $model->imgFile = UploadedFile::getInstance($model, 'imgFile');
+        if ($model->imgFile) {
+            $model->uploadImg();
+        } else {
+            $model->img = null;
+        }
+        $model->save();
     }
 
     /**
@@ -154,7 +165,7 @@ class ReviewController extends Controller
     {
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        return $this->renderAdmin();
     }
 
     /**
@@ -185,5 +196,25 @@ class ReviewController extends Controller
             'fio' => $data->fio
         ];
         return Json::encode($response);
+    }
+
+    public function renderAdmin() {
+        $dataProvider = new ActiveDataProvider(
+            [
+                'query' => Review::find()->where(['id_author' => Yii::$app->user->id])
+            ]
+        );
+
+        return $this->render(
+            'admin',
+            [
+                'dataProvider' => $dataProvider,
+            ]
+        );
+    }
+
+    public function actionAdmin()
+    {
+        return $this->renderAdmin();
     }
 }
