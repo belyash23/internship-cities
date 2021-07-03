@@ -21,7 +21,7 @@ $this->title = 'My Yii Application';
         <?php
         $form = ActiveForm::begin(
             [
-                'action' => 'site/choose-city',
+                'action' => ['site/choose-city'],
                 'options' => [
                     'class' => 'col-md-4 col-md-offset-4'
                 ]
