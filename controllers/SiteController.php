@@ -65,9 +65,6 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        if (Yii::$app->session->has('city')) {
-            return $this->redirect(['review/index']);
-        }
         $ip = Yii::$app->request->userIp;
         $queryParams = http_build_query(
             [
