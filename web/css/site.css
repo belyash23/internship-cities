@@ -114,22 +114,23 @@ a.desc:after {
     outline: none;
 }
 
-.sidebar {
-    position: absolute;
-    top: 150px;
-    right: 50px;
+.user-menu {
+    padding: 10px 20px 10px 20px;
+    width: 200px;
     background: #f5f5f5;
-    padding: 10px;
     border-radius: 4px;
 }
-.sidebar ul {
+.user-menu ul {
     padding: 0;
     list-style-type: none;
 }
-.sidebar h5 {
+.user-menu h5 {
     border-bottom: 1px solid #101010;
 }
-
+.container-base {
+    /*display: flex;*/
+    /*justify-content: space-around;*/
+}
 .review-img {
     max-height: 200px;
 }

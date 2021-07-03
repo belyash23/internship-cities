@@ -26,17 +26,24 @@ AppAsset::register($this);
 <?php $this->beginBody() ?>
 
 <div class="wrap">
-    <div class="sidebar">
-        <?= UserMenu::widget(); ?>
+
+    <div class="container container-base">
+        <div class="row">
+            <div class="container col-sm-10">
+                <?= Breadcrumbs::widget([
+                                            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+                                        ]) ?>
+                <?= Alert::widget() ?>
+                <?= $content ?>
+            </div>
+            <div class="sidebar col-sm-2">
+                <div class="user-menu">
+                    <?= UserMenu::widget(); ?>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
-    </div>
 </div>
 
 <footer class="footer">
