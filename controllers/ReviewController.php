@@ -98,9 +98,9 @@ class ReviewController extends Controller
         $model = new Review();
 
         if ($model->load(Yii::$app->request->post())) {
+            Yii::$app->session->setFlash('success', 'Отзыв успешно создан');
             $this->save($model);
         }
-        Yii::$app->session->setFlash('success', 'Отзыв успешно создан');
         return $this->render(
             'create',
             [
@@ -198,7 +198,8 @@ class ReviewController extends Controller
         return Json::encode($response);
     }
 
-    public function renderAdmin() {
+    public function renderAdmin()
+    {
         $dataProvider = new ActiveDataProvider(
             [
                 'query' => Review::find()->where(['id_author' => Yii::$app->user->id])

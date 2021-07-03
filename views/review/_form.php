@@ -4,6 +4,7 @@ use yii\helpers\Html;
 use yii\jui\AutoComplete;
 use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
 
 
 /* @var $this yii\web\View */
@@ -14,7 +15,18 @@ use yii\widgets\ActiveForm;
 <div class="review-form">
 
     <?php
-    $form = ActiveForm::begin(); ?>
+    Pjax::begin();
+    if (Yii::$app->session->hasFlash('success')) {
+        echo Html::tag('p', Yii::$app->session->getFlash('success'), ['class' => 'alert-success alert fade in']);
+    }
+
+    $form = ActiveForm::begin(
+        [
+            'options' => [
+                'data-pjax' => true
+            ]
+        ]
+    ); ?>
 
     <div class="form-group">
         <label for="review-cityname">Город</label>
@@ -67,6 +79,7 @@ use yii\widgets\ActiveForm;
     </div>
 
     <?php
-    ActiveForm::end(); ?>
+    ActiveForm::end();
+    Pjax::end(); ?>
 
 </div>
