@@ -17,7 +17,9 @@ $config = [
             'cookieValidationKey' => '8XmV_cIqi0glYIniSSZxfEh2cjXAYYpR',
         ],
         'cache' => [
-            'class' => 'yii\caching\FileCache',
+            'class' => 'yii\caching\DbCache',
+            'db' => 'db',
+            'cacheTable' => 'cache',
         ],
         'user' => [
             'identityClass' => 'app\models\User',
