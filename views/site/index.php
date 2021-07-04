@@ -6,6 +6,7 @@ use app\models\City;
 use yii\bootstrap\Modal;
 use yii\helpers\Html;
 use yii\jui\AutoComplete;
+use yii\web\JsExpression;
 use yii\widgets\ActiveForm;
 
 $this->title = 'My Yii Application';
@@ -28,6 +29,7 @@ $this->title = 'My Yii Application';
             ]
         ); ?>
         <div class="form-group">
+            <?= $form->field($model, 'city')->hiddenInput(['id' => 'city-hidden']) ?>
             <?php
             $cities = array_values(City::find()->select('name')->asArray()->orderBy('name')->all());
             $source = [];
@@ -37,14 +39,16 @@ $this->title = 'My Yii Application';
             echo AutoComplete::widget(
                 [
                     'model' => $model,
-                    'attribute' => 'city',
                     'options' => [
-                        'id' => 'choosecity-city',
                         'class' => 'form-control',
-                        'required' => 'true'
                     ],
                     'clientOptions' => [
-                        'source' => $source
+                        'source' => $source,
+                        'change' => new JsExpression(
+                            "function( event, ui ) {
+                                $('#city-hidden').val($(this).val());
+                            }"
+                        )
                     ],
                 ]
             );
@@ -76,10 +80,12 @@ $this->title = 'My Yii Application';
         echo Html::a('Да', ['site/choose-city', 'city' => $model->city], ['class' => 'btn btn-primary']);
         echo Html::button('Нет', ['id' => 'modal-no', 'class' => 'btn btn-primary pull-right']);
         Modal::end();
-        $this->registerJs("
+        $this->registerJs(
+            "
             $('#open-modal').click();
             $('#modal-no').click(() => $('#close-modal').click());
-        ");
+        "
+        );
     }
     ?>
 </div>

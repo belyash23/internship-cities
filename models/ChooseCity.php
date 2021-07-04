@@ -12,13 +12,13 @@ class ChooseCity extends Model
     public function rules()
     {
         return [
-            ['city', 'required']
+            ['city', 'required', 'message' => 'Выберите город']
         ];
     }
     public function attributeLabels()
     {
         return [
-            'city' => 'Город'
+            'city' => ''
         ];
     }
 }
